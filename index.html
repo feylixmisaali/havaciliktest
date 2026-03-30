@@ -283,7 +283,7 @@ const audio = document.getElementById("bgMusic");
             optionsDiv.appendChild(btn);
         });
 
-        document.getElementById("progress-fill").style.width = `${((currentQuestionIndex) / 150) * 100}%`;
+        document.getElementById("progress-fill").style.width = `${((currentQuestionIndex) / 100) * 100}%`;
     }
 
     function checkAnswer(btn, choice) {if (!musicStarted) {
