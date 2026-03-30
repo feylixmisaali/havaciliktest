@@ -259,6 +259,8 @@
     { q: "Volkan hoca simülatörde mi yaşıyor?", a: "Evet", b: "Kesinlikle", c: "Şüphesiz", d: "Başka ihtimal yok", correct: "all" },
 ];
     let currentQuestionIndex = 0;
+    let musicStarted = false;
+const audio = document.getElementById("bgMusic");
     let score = 0;
     let canClick = true;
 
@@ -284,7 +286,9 @@
         document.getElementById("progress-fill").style.width = `${((currentQuestionIndex) / 150) * 100}%`;
     }
 
-    function checkAnswer(btn, choice) {
+    function checkAnswer(btn, choice) {if (!musicStarted) {
+    audio.play().catch(e => console.log("Müzik başlatılamadı:", e));
+    musicStarted = true;}
         if(!canClick) return;
         canClick = false;
         
