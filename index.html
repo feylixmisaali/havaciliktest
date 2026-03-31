@@ -281,7 +281,8 @@ const audio = document.getElementById("bgMusic");
     
     // Eğer ilk soruda değilsek 'Önceki Soru' butonu görünsün
     if(prevBtn) {
-        prevBtn.style.display = currentQuestionIndex > 0 ? "block" : "none";
+        // 284. satırdaki 'display' yerine 'visibility' kullanıyoruz
+prevBtn.style.visibility = currentQuestionIndex > 0 ? "visible" : "hidden";
     }
 
     const optionsDiv = document.getElementById("options");
