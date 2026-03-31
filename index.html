@@ -137,7 +137,7 @@
 <div style="display: flex; gap: 10px; margin-top: 20px; height: 50px; overflow: hidden;">
     <button id="prev-btn" onclick="loadPrevQuestion()" style="flex: 1; padding: 12px; background: #475569; border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: bold; visibility: hidden;">Önceki Soru</button>
     
-    <button id="next-btn" onclick="loadNextQuestion()" style="flex: 1; padding: 12px; background: var(--primary); border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; display: none; font-size: 16px; white-space: nowrap;">Sonraki Soruya Geç</button>
+    <button id="next-btn" onclick="loadNextQuestion()" style="flex: 1; padding: 15px; background: var(--primary); border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; display: none; font-size: 18px; width: 100%;">Sonraki Soruya Geç</button>
 </div>
     </div>
 
@@ -340,7 +340,19 @@ function checkAnswer(btn, choice) {
     }
     // Önceki satır: document.getElementById("prev-btn").style.visibility = "hidden";
 // YENİ SATIR:
-document.getElementById("prev-btn").style.display = "none";
+// checkAnswer içindeki o satırı bununla değiştir:
+const prevBtn = document.getElementById("prev-btn");
+const nextBtn = document.getElementById("next-btn");
+
+if (prevBtn) {
+    prevBtn.style.display = "none"; // Önceki butonu tamamen kaldır
+}
+
+if (nextBtn) {
+    nextBtn.style.display = "block"; // Sonraki butonu göster
+    nextBtn.style.flex = "1";        // Tüm alanı kaplat
+    nextBtn.style.width = "100%";    // Genişliği %100'e zorla
+}
     if(!canClick) return;
     canClick = false;
     
