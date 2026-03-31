@@ -299,14 +299,43 @@ const audio = document.getElementById("bgMusic");
     document.getElementById("progress-fill").style.width = `${((currentQuestionIndex + 1) / questionBank.length) * 100}%`;
 }
 
-        document.getElementById("progress-fill").style.width = `${((currentQuestionIndex) / 100) * 100}%`;
-    }
+// 299. satırdaki genişlik kodundan sonra fonksiyonu bitiriyoruz
+    document.getElementById("progress-fill").style.width = `${((currentQuestionIndex + 1) / questionBank.length) * 100}%`;
+} // loadQuestion burada bitiyor
 
-    function checkAnswer(btn, choice) {
+function checkAnswer(btn, choice) {
     if (!musicStarted) {
         audio.play().catch(e => console.log("Müzik başlatılamadı:", e));
         musicStarted = true;
     }
+    
+    if(!canClick) return;
+    canClick = false;
+    
+    const currentQ = questionBank[currentQuestionIndex];
+    const correctChoice = currentQ.correct;
+    const allButtons = document.querySelectorAll(".option-btn");
+
+    if(choice === correctChoice || correctChoice === "all") {
+        btn.classList.add("correct");
+        score++;
+    } else {
+        btn.classList.add("wrong");
+        allButtons.forEach(b => {
+            if(b.innerText === currentQ[correctChoice]) {
+                b.classList.add("correct");
+            }
+        });
+    }
+    document.getElementById("next-btn").style.display = "block";
+}
+
+function loadPrevQuestion() {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        loadQuestion();
+    }
+}
     
     if(!canClick) return;
     canClick = false;
