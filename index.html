@@ -419,6 +419,112 @@ function toggleMusic() {
     }
     isMuted = !isMuted;
 }
+    // --- PLAKA OYUNU VERİLERİ VE MANTIĞI ---
+const cityData = [
+    { n: "Adana", p: "01" }, { n: "Adıyaman", p: "02" }, { n: "Afyonkarahisar", p: "03" }, { n: "Ağrı", p: "04" }, { n: "Amasya", p: "05" },
+    { n: "Ankara", p: "06" }, { n: "Antalya", p: "07" }, { n: "Artvin", p: "08" }, { n: "Aydın", p: "09" }, { n: "Balıkesir", p: "10" },
+    { n: "Bilecik", p: "11" }, { n: "Bingöl", p: "12" }, { n: "Bitlis", p: "13" }, { n: "Bolu", p: "14" }, { n: "Burdur", p: "15" },
+    { n: "Bursa", p: "16" }, { n: "Çanakkale", p: "17" }, { n: "Çankırı", p: "18" }, { n: "Çorum", p: "19" }, { n: "Denizli", p: "20" },
+    { n: "Diyarbakır", p: "21" }, { n: "Edirne", p: "22" }, { n: "Elazığ", p: "23" }, { n: "Erzincan", p: "24" }, { n: "Erzurum", p: "25" },
+    { n: "Eskişehir", p: "26" }, { n: "Gaziantep", p: "27" }, { n: "Giresun", p: "28" }, { n: "Gümüşhane", p: "29" }, { n: "Hakkari", p: "30" },
+    { n: "Hatay", p: "31" }, { n: "Isparta", p: "32" }, { n: "Mersin", p: "33" }, { n: "İstanbul", p: "34" }, { n: "İzmir", p: "35" },
+    { n: "Kars", p: "36" }, { n: "Kastamonu", p: "37" }, { n: "Kayseri", p: "38" }, { n: "Kırklareli", p: "39" }, { n: "Kırşehir", p: "40" },
+    { n: "Kocaeli", p: "41" }, { n: "Konya", p: "42" }, { n: "Kütahya", p: "43" }, { n: "Malatya", p: "44" }, { n: "Manisa", p: "45" },
+    { n: "Kahramanmaraş", p: "46" }, { n: "Mardin", p: "47" }, { n: "Muğla", p: "48" }, { n: "Muş", p: "49" }, { n: "Nevşehir", p: "50" },
+    { n: "Niğde", p: "51" }, { n: "Ordu", p: "52" }, { n: "Rize", p: "53" }, { n: "Sakarya", p: "54" }, { n: "Samsun", p: "55" },
+    { n: "Siirt", p: "56" }, { n: "Sinop", p: "57" }, { n: "Sivas", p: "58" }, { n: "Tekirdağ", p: "59" }, { n: "Tokat", p: "60" },
+    { n: "Tunceli", p: "62" }, { n: "Şanlıurfa", p: "63" }, { n: "Uşak", p: "64" }, { n: "Van", p: "65" }, { n: "Yozgat", p: "66" },
+    { n: "Zonguldak", p: "67" }, { n: "Aksaray", p: "68" }, { n: "Bayburt", p: "69" }, { n: "Karaman", p: "70" }, { n: "Kırıkkale", p: "71" },
+    { n: "Batman", p: "72" }, { n: "Şırnak", p: "73" }, { n: "Bartın", p: "74" }, { n: "Ardahan", p: "75" }, { n: "Iğdır", p: "76" },
+    { n: "Yalova", p: "77" }, { n: "Karabük", p: "78" }, { n: "Kilis", p: "79" }, { n: "Osmaniye", p: "80" }, { n: "Düzce", p: "81" }
+];
+
+let isPlateGame = false;
+let plateScore = 0;
+let currentPlateIndex = 0;
+
+function toggleGame() {
+    isPlateGame = !isPlateGame;
+    // Başlığı değiştir
+    document.querySelector('h1').innerText = isPlateGame ? "Plaka Tahmin Oyunu" : "06 EIT 451";
+    
+    if(isPlateGame) {
+        plateScore = 0;
+        currentPlateIndex = 0;
+        // İlleri karıştır ve oyunu başlat
+        cityData.sort(() => Math.random() - 0.5);
+        loadPlateQuestion();
+    } else {
+        location.reload(); // Havacılık oyununa temiz dönüş
+    }
+}
+
+function loadPlateQuestion() {
+    canClick = true;
+    const currentCity = cityData[currentPlateIndex];
+    
+    // Arayüzü güncelle (Havacılık testiyle aynı ID'leri kullanıyoruz)
+    document.getElementById("question").innerText = `${currentCity.n} ilinin plaka kodu nedir?`;
+    document.getElementById("question-counter").innerText = `Soru: ${currentPlateIndex + 1} / 81 | Puan: ${plateScore}`;
+    
+    // Şıkları hazırla (1 doğru, 3 rastgele yanlış)
+    let options = [currentCity.p];
+    while(options.length < 4) {
+        let randomPlate = Math.floor(Math.random() * 81 + 1).toString().padStart(2, '0');
+        if(!options.includes(randomPlate)) options.push(randomPlate);
+    }
+    options.sort(() => Math.random() - 0.5);
+
+    // Butonları oluştur
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
+    options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.innerText = opt;
+        btn.onclick = () => checkPlateAnswer(btn, opt, currentCity.p);
+        optionsDiv.appendChild(btn);
+    });
+    
+    document.getElementById("next-btn").style.display = "none";
+    
+    // Progress bar güncelleme
+    const progress = ((currentPlateIndex + 1) / 81) * 100;
+    document.getElementById("progress-fill").style.width = progress + "%";
+}
+
+function checkPlateAnswer(btn, choice, correct) {
+    if(!canClick) return;
+    canClick = false;
+
+    if(choice === correct) {
+        btn.classList.add("correct");
+        plateScore += 10;
+    } else {
+        btn.classList.add("wrong");
+        plateScore = Math.max(0, plateScore - 5);
+        // Doğru şıkkı yeşil yap
+        Array.from(document.querySelectorAll(".option-btn")).forEach(b => {
+            if(b.innerText === correct) b.classList.add("correct");
+        });
+    }
+
+    // Skor göstergesini anlık güncelle
+    document.getElementById("question-counter").innerText = `Soru: ${currentPlateIndex + 1} / 81 | Puan: ${plateScore}`;
+
+    const nextBtn = document.getElementById("next-btn");
+    nextBtn.style.display = "block";
+    nextBtn.innerText = "Sonraki İle Geç";
+    nextBtn.onclick = () => {
+        currentPlateIndex++;
+        if(currentPlateIndex < 81) {
+            loadPlateQuestion();
+        } else {
+            alert(`Oyun Bitti! Toplam Puanın: ${plateScore}`);
+            location.reload();
+        }
+    };
+}
 </script>
 <button onclick="toggleGame()" style="position: fixed; top: 20px; left: 20px; z-index: 1000; background: rgba(30, 41, 59, 0.8); border: 1px solid var(--primary); color: white; border-radius: 8px; padding: 10px 15px; cursor: pointer; font-weight: bold;">
     🚗 Plaka Oyunu
